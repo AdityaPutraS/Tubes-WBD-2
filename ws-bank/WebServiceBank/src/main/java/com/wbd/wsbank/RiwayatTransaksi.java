@@ -1,39 +1,34 @@
 package com.wbd.wsbank;
 
+import java.util.ArrayList;
+
 public class RiwayatTransaksi {
     int jumlah;
-    public Transaksi[] riwayatTransaksi;
-    
+    public ArrayList<Transaksi> riwayatTransaksi;
+
     public RiwayatTransaksi(){
         this.jumlah = 0;
-    }
-
-    public RiwayatTransaksi(int jumlah){
-        this.jumlah = jumlah;
-        this.riwayatTransaksi = new Transaksi[jumlah];
-        for (int i=0; i<jumlah; i++){
-            this.riwayatTransaksi[i] = new Transaksi();
-        }
+        this.riwayatTransaksi = new ArrayList<Transaksi>();
     }
 
     public int getJumlah() {
         return jumlah;
     }
 
-    public Transaksi[] getRiwayat() {
+    public ArrayList<Transaksi> getRiwayat() {
         return this.riwayatTransaksi;
     }
 
     public Transaksi getTransaksi(int i) {
-        return this.riwayatTransaksi[i];
+        return this.riwayatTransaksi.get(i);
     }
 
     public void setJumlah(int jumlah) {
         this.jumlah = jumlah;
     }
 
-    public void setTransaksi(int i, Transaksi transaksi) {
-        this.riwayatTransaksi[i] = transaksi;
+    public void addTransaksi(Transaksi transaksi) {
+        this.riwayatTransaksi.add(transaksi);
     }
 
 

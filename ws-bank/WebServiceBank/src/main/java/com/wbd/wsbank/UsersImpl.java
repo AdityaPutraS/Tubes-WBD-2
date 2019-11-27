@@ -80,12 +80,12 @@ public class UsersImpl implements Users {
         return id;
     }
 
-    public Akun getUserData(int id) {
+    public Akun getUserData(String no_rekening) {
         Akun akun = new Akun();
         String userName = "ws_bank", password = "ws_bank";
         String dbUrl = "jdbc:mysql://db:3306/ws_bank?connectTimeout=0&socketTimeout=0&autoReconnect=true";
         String dbClass = "com.mysql.cj.jdbc.Driver";
-        String query = "Select * FROM nasabah WHERE id_nasabah=" + id;
+        String query = "Select * FROM nasabah WHERE no_rekening=" + no_rekening;
         try {
 
             Class.forName(dbClass);
@@ -119,12 +119,28 @@ public class UsersImpl implements Users {
 
     }
 
-    public RiwayatTransaksi getTransactionHistory(int id) {
-        int jumlah = 0;
+    public RiwayatTransaksi getTransactionHistory(String no_rekening) {
         String userName = "ws_bank", password = "ws_bank";
         String dbUrl = "jdbc:mysql://db:3306/ws_bank?connectTimeout=0&socketTimeout=0&autoReconnect=true";
         String dbClass = "com.mysql.cj.jdbc.Driver";
-        String query = "Select count(*) FROM transaksi WHERE id_nasabah=" + id;
+
+        RiwayatTransaksi riwayat = new RiwayatTransaksi();
+
+        // Sub query 1 = No rekening sebagai pengirim
+        // Sub query 2 = No rekening sebagai penerima
+        // Sub query 3 = No rekening virtual dari no rekening sebagai pengirim
+        // Sub query 4 = No rekening virtual dari no rekening sebagai penerima
+        String subQuery1 = "(SELECT id_transaksi, no_rek_pengirim, no_rek_penerima, 'Debit' AS tipe, jumlah, waktu FROM transaksi WHERE no_rek_pengirim='"
+                + no_rekening + "')";
+        String subQuery2 = "(SELECT id_transaksi, no_rek_pengirim, no_rek_penerima, 'Kredit' AS tipe, jumlah, waktu FROM transaksi WHERE no_rek_penerima='"
+                + no_rekening + "')";
+        String subQuery3 = "(SELECT id_transaksi, no_rek_pengirim, no_rek_penerima, 'Debit' AS tipe, jumlah, waktu FROM transaksi WHERE EXISTS (SELECT * FROM akun_virtual WHERE no_rekening='"
+                + no_rekening + "' and no_virtual=no_rek_pengirim))";
+        String subQuery4 = "(SELECT id_transaksi, no_rek_pengirim, no_rek_penerima, 'Kredit' AS tipe, jumlah, waktu FROM transaksi WHERE EXISTS (SELECT * FROM akun_virtual WHERE no_rekening='"
+                + no_rekening + "' and no_virtual=no_rek_penerima))";
+        String query = subQuery1 + " UNION " + subQuery2 + " UNION " + subQuery3 + " UNION " + subQuery4
+                + " ORDER BY waktu DESC";
+        System.out.println(query);
         try {
 
             Class.forName(dbClass);
@@ -132,46 +148,18 @@ public class UsersImpl implements Users {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
-            while (rs.next()) {
-                jumlah = rs.getInt(1);
-            } // end while
-
-            con.close();
-        } // end try
-
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        RiwayatTransaksi riwayat = new RiwayatTransaksi(jumlah);
-
-        query = "Select * FROM transaksi WHERE id_nasabah=" + id;
-        try {
-
-            Class.forName(dbClass);
-            Connection con = DriverManager.getConnection(dbUrl, userName, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-
-            int i = 0;
             while (rs.next()) {
                 Transaksi transaksi = new Transaksi();
                 transaksi.setIDTransaksi(rs.getInt(1));
-                transaksi.setIDNasabah(rs.getInt(2));
-                transaksi.setJenis(rs.getString(3));
-                transaksi.setJumlah(rs.getDouble(4));
-                transaksi.setNoRekening(rs.getString(5));
+                transaksi.setPengirim(rs.getString(2));
+                transaksi.setPenerima(rs.getString(3));
+                transaksi.setJenis(rs.getString(4));
+                transaksi.setJumlah(rs.getDouble(5));
                 transaksi.setWaktu(rs.getString(6));
-                riwayat.setTransaksi(i, transaksi);
-                i = i + 1;
-            } // end while
-
+                riwayat.addTransaksi(transaksi);
+            }
             con.close();
-        } // end try
+        }
 
         catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -186,4 +174,54 @@ public class UsersImpl implements Users {
         }
 
     }
+
+    public RiwayatTransaksi getAllKredit(String no_rekening, String start_date, String end_date) {
+        String userName = "ws_bank", password = "ws_bank";
+        String dbUrl = "jdbc:mysql://db:3306/ws_bank?connectTimeout=0&socketTimeout=0&autoReconnect=true";
+        String dbClass = "com.mysql.cj.jdbc.Driver";
+
+        RiwayatTransaksi riwayat = new RiwayatTransaksi();
+
+        // Sub query 1 = No rekening sebagai penerima
+        // Sub query 2 = No rekening virtual dari no rekening sebagai penerima
+        String subQuery1 = "(SELECT id_transaksi, no_rek_pengirim, no_rek_penerima, 'Kredit' AS tipe, jumlah, waktu FROM transaksi WHERE no_rek_penerima='"
+                + no_rekening + "' AND waktu >= DATE('" + start_date + "') AND waktu <= DATE('" + end_date + "'))";
+        String subQuery2 = "(SELECT id_transaksi, no_rek_pengirim, no_rek_penerima, 'Kredit' AS tipe, jumlah, waktu FROM transaksi WHERE EXISTS (SELECT * FROM akun_virtual WHERE no_rekening='"
+                + no_rekening + "' and no_virtual=no_rek_penerima)" + " AND waktu >= DATE('" + start_date
+                + "') AND waktu <= DATE('" + end_date + "'))";
+        String query = subQuery1 + " UNION " + subQuery2;
+        System.out.println(query);
+        try {
+
+            Class.forName(dbClass);
+            Connection con = DriverManager.getConnection(dbUrl, userName, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                Transaksi transaksi = new Transaksi();
+                transaksi.setIDTransaksi(rs.getInt(1));
+                transaksi.setPengirim(rs.getString(2));
+                transaksi.setPenerima(rs.getString(3));
+                transaksi.setJenis(rs.getString(4));
+                transaksi.setJumlah(rs.getDouble(5));
+                transaksi.setWaktu(rs.getString(6));
+                riwayat.addTransaksi(transaksi);
+            }
+            con.close();
+        }
+
+        catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        finally {
+            return riwayat;
+        }
+    }
+
 }

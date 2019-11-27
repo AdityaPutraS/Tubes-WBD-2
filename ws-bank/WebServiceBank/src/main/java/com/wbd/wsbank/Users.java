@@ -11,7 +11,8 @@ public interface Users {
 
     @WebMethod boolean findUser(String no);
     @WebMethod int getId(String no_rekening);
-    @WebMethod Akun getUserData(int id);
-    @WebMethod RiwayatTransaksi getTransactionHistory(int id);
+    @WebMethod Akun getUserData(String no_rekening);
+    @WebMethod RiwayatTransaksi getTransactionHistory(String no_rekening);
+    @WebMethod RiwayatTransaksi getAllKredit(String no_rekening, String start_date, String end_date);
     
 }

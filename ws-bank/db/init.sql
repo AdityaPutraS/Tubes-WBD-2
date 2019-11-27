@@ -64,7 +64,7 @@ CREATE TABLE `nasabah` (
 
 LOCK TABLES `nasabah` WRITE;
 /*!40000 ALTER TABLE `nasabah` DISABLE KEYS */;
-INSERT INTO `nasabah` VALUES (1,'aditya','13517013',100000),(2,'user2','13500001',0),(3,'user3','13500002',10),(4,'user4','13500003',1000);
+INSERT INTO `nasabah` VALUES (1,'aditya','13517013',95000),(2,'user2','13500001',0),(3,'user3','13500002',10),(4,'user4','13500003',1000);
 /*!40000 ALTER TABLE `nasabah` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -77,15 +77,12 @@ DROP TABLE IF EXISTS `transaksi`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `transaksi` (
   `id_transaksi` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `id_nasabah` int(10) unsigned DEFAULT NULL,
-  `jenis` enum('Debit','Kredit') DEFAULT NULL,
-  `jumlah` double DEFAULT NULL,
-  `no_rekening` varchar(20) DEFAULT NULL,
+  `no_rek_pengirim` varchar(20) NOT NULL,
+  `no_rek_penerima` varchar(20) NOT NULL,
+  `jumlah` double NOT NULL,
   `waktu` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_transaksi`),
-  KEY `FK_Nasabah` (`id_nasabah`),
-  CONSTRAINT `FK_Nasabah` FOREIGN KEY (`id_nasabah`) REFERENCES `nasabah` (`id_nasabah`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id_transaksi`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,6 +91,7 @@ CREATE TABLE `transaksi` (
 
 LOCK TABLES `transaksi` WRITE;
 /*!40000 ALTER TABLE `transaksi` DISABLE KEYS */;
+INSERT INTO `transaksi` VALUES (1,'13517013','13500001',20000,'2019-11-27 09:14:48'),(2,'13517013','13500002',30000,'2019-11-27 09:14:48'),(3,'13517013','13500003',15000,'2019-11-27 09:14:48'),(4,'13517013','13500004',10000,'2019-11-27 09:14:48'),(5,'13517013','13500008',8000,'2019-11-27 09:14:48'),(6,'13500001','13517013',1000,'2019-11-27 09:14:48'),(7,'13500002','13517013',2000,'2019-11-27 09:14:48'),(8,'13500003','13517013',3000,'2019-11-27 09:14:48'),(9,'13500004','13517013',4000,'2019-11-27 09:14:48'),(10,'13500008','13517013',5000,'2019-11-27 09:14:50'),(11,'13500001','13500004',20000,'2019-11-25 00:00:00');
 /*!40000 ALTER TABLE `transaksi` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -106,4 +104,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-21 23:44:49
+-- Dump completed on 2019-11-27 22:41:42

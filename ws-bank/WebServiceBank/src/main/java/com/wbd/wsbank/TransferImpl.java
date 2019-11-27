@@ -13,9 +13,9 @@ import java.util.Random;
 
 public class TransferImpl implements Transfer {
 
-	private static final String dbUrl = "jdbc:mysql://localhost:3306/bankdb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+	private static final String dbUrl = "jdbc:mysql://db:3306/ws_bank?connectTimeout=0&socketTimeout=0&autoReconnect=true";
 	private static final String dbClass = "com.mysql.cj.jdbc.Driver";
-	private static final String userName = "root", password = "";
+	private static final String userName = "ws_bank", password = "ws_bank";
 
 	public int getTransactionId() {
 		String query = "SELECT MAX(id_transaksi) FROM `transaksi`";
@@ -80,49 +80,43 @@ public class TransferImpl implements Transfer {
 	}
 
 	public boolean transfer(String pengirim, String penerima, int amount) {
-		String userName = "ws_bank", password = "ws_bank";
-		String dbUrl = "jdbc:mysql://db:3306/ws_bank?connectTimeout=0&socketTimeout=0&autoReconnect=true";
-		String dbClass = "com.mysql.cj.jdbc.Driver";
-		UsersImpl ui = new UsersImpl();
-		// Get id pengirim
-		int idPengirim = ui.getId(pengirim);
-		// Get id penerima
-		int idPenerima = ui.getId(penerima);
 
 		boolean t = false;
-		// Cek apakah akun valid
-		if (idPengirim != -1) {
-			if (idPenerima == -1) {
-				VirtualAccountImpl vai = new VirtualAccountImpl();
-				if (vai.validateVirtualAccount(penerima)) {
-					t = true;
-				}
-			} else {
+		boolean penerimaVirtual = false;
+		UsersImpl ui = new UsersImpl();
+		if (ui.findUser(pengirim)) {
+			VirtualAccountImpl vai = new VirtualAccountImpl();
+			if (vai.validateVirtualAccount(penerima)) {
+				t = true;
+				penerimaVirtual = true;
+			} else if (ui.findUser(penerima)) {
 				t = true;
 			}
 		}
-
 		// Cek saldo
 		if (t) {
 			if (isSaldoCukup(pengirim, amount)) {
 				// Insert ke transaksi
-				String debit = "INSERT INTO transaksi(id_nasabah, jenis, jumlah, no_rekening, waktu) VALUES("
-						+ idPengirim + ", " + "1, " + amount + ", " + penerima + ", now())";
-				String kredit = "INSERT INTO transaksi(id_nasabah, jenis, jumlah, no_rekening, waktu) VALUES("
-						+ idPenerima + ", " + "2, " + amount + ", " + pengirim + ", now())";
+				String query = "INSERT INTO transaksi(no_rek_pengirim, no_rek_penerima, jumlah) VALUES(" + pengirim
+						+ ", " + penerima + ", 20000)";
 				try {
 					Class.forName(dbClass);
 					Connection connect = DriverManager.getConnection(dbUrl, userName, password);
 					Statement statement = connect.createStatement();
-					ResultSet deb = statement.executeQuery(debit);
-					ResultSet kre = statement.executeQuery(kredit);
-					if (deb.next() && kre.next()) {
-						// Kurangin dari penerima, tambahin ke pengirim
-						String updatePenerima = "UPDATE nasabah SET jumlah=jumlah-" + amount + " where id_nasabah="
-								+ idPengirim;
-						ResultSet updPen = statement.executeQuery(updatePenerima);
-						if (updPen.next()) {
-							return true;
+					ResultSet rs = statement.executeQuery(query);
+					if (rs.next()) {
+						// Kurangin dari pengirim, tambahin ke penerima
+						String updatePengirim = "UPDATE nasabah SET jumlah=jumlah-" + amount + " where no_rekening="
+								+ pengirim;
+						ResultSet updKirim = statement.executeQuery(updatePengirim);
+						if (updKirim.next()) {
+							if (penerimaVirtual) {
+
+							} else {
+							}
+							String updatePenerima = "UPDATE nasabah SET jumlah=jumlah-" + amount + " where no_rekening="
+									+ pengirim;
+							ResultSet updTerima = statement.executeQuery(updatePenerima);
 						} else {
 							t = false;
 						}

@@ -2,15 +2,15 @@ package com.wbd.wsbank;
 
 public class Transaksi {
     int id_transaksi;
-    int id_nasabah;
+    String pengirim, penerima;
     String jenis;
     double jumlah = 0;
-    String no_rekening;
     String waktu;
     
     public Transaksi() {
         this.id_transaksi = 0;
-        this.id_nasabah = 0;
+        this.pengirim = "";
+        this.penerima = "";
         this.jenis = "";
         this.jumlah = 0;
         this.waktu = "";
@@ -20,8 +20,12 @@ public class Transaksi {
         return id_transaksi;
     }
 
-    public int getIDNasabah() {
-        return id_nasabah;
+    public String getPengirim() {
+        return pengirim;
+    }
+
+    public String getPenerima() {
+        return penerima;
     }
 
     public String getJenis() {
@@ -32,10 +36,6 @@ public class Transaksi {
         return jumlah;
     }
 
-    public String getNoRekening() {
-        return no_rekening;
-    }
-
     public String getWaktu() {
         return waktu;
     }
@@ -44,8 +44,12 @@ public class Transaksi {
         this.id_transaksi = id_transaksi;
     }
 
-    public void setIDNasabah(int id_nasabah) {
-        this.id_nasabah = id_nasabah;
+    public void setPengirim(String no_rekening) {
+        this.pengirim = no_rekening;
+    }
+
+    public void setPenerima(String no_rekening) {
+        this.penerima = no_rekening;
     }
 
     public void setJenis(String jenis) {
@@ -54,10 +58,6 @@ public class Transaksi {
 
     public void setJumlah(double jumlah) {
         this.jumlah = jumlah;
-    }
-
-    public void setNoRekening(String no_rekening) {
-        this.no_rekening = no_rekening;
     }
 
     public void setWaktu(String waktu) {
