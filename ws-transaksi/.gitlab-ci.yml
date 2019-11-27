@@ -1,0 +1,42 @@
+stages:
+  - build
+  - deploy
+
+aws_pull:
+  stage: build
+  only:
+    - development
+    - master
+  tags:
+    - WS-Transaksi
+  script:
+    - 'whoami'
+    - 'cd /home/gitlab-runner/ws-transaksi'
+    - 'echo "Start pull dari repo"'
+    - 'git stash'
+    - 'git checkout development'
+    - 'git pull origin development'
+    - 'echo "Done pull dari repo"'
+
+aws_build:
+  stage: build
+  only:
+    - development
+    - master
+  tags:
+    - WS-Transaksi
+  script:
+    - 'npm install'
+    # TODO : Linting & Testing
+
+aws_deploy:
+  stage: deploy
+  only:
+    - development
+    - master
+  tags:
+    - WS-Transaksi
+  script:
+    - 'cd /home/gitlab-runner/ws-transaksi'
+    - 'forever stopall'
+    - 'forever start server.js'

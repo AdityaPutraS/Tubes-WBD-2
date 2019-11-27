@@ -1,0 +1,36 @@
+stages:
+  - build
+  - deploy
+
+aws_pull:
+  stage: build
+  only:
+    - development
+    - master
+  tags:
+    - WS-Bank
+  script:
+    - 'whoami'
+    - 'cd /home/gitlab-runner/ws-bank'
+    - 'echo "Start pull dari repo"'
+    - 'git stash'
+    - 'git checkout development'
+    - 'git pull origin development'
+    - 'echo "Done pull dari repo"'
+
+aws_deploy:
+  stage: deploy
+  only:
+    - development
+    - master
+  tags:
+    - WS-Bank
+  script:
+    - 'echo "Buat war"'
+    - 'cd /home/gitlab-runner/ws-bank/WebServiceBank'
+    - 'mvn clean package'
+    - 'cd ..'
+    - 'echo "Stop docker compose sebelumnya"'
+    - 'docker-compose stop'
+    - 'echo "Jalankan docker compose"'
+    - 'sudo docker-compose up --build -d'

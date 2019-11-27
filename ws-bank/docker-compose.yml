@@ -1,0 +1,19 @@
+version: '3'
+services: 
+    tomcat:
+      build: .
+      ports:
+      - "8080:8080"
+      links:
+        - db
+    db:
+      image: mysql:latest
+      environment:
+        MYSQL_ROOT_PASSWORD: "inuc"
+        MYSQL_DATABASE: "ws_bank"
+        MYSQL_USER: "ws_bank"
+        MYSQL_PASSWORD: "ws_bank"
+    #  ports:
+    #    - "3306:3306"
+      volumes:
+      - ./db:/docker-entrypoint-initdb.d

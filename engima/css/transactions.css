@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,600,700,800&display=swap');
+
+.transactions-content-container{
+    background-color: white;
+    width: 80%;
+    min-height: calc(100% - 170px);
+    height: auto;
+    margin: 0 auto;
+    box-shadow: inset 0px 105px 9px -6px gray;
+    padding: 20px 40px;
+    padding-top: 150px;
+}
+
+.transactions-content{
+    padding: 0px 80px;
+}
+
+.film-list {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.film-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.img-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 300px;
+}
+
+.name-container {
+    padding-top: 10px;
+}
+
+.film-img {
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}
+
+.film-title {
+    font-size: 20px;
+    padding-top: 20px;
+}
+
+.schedule-container {
+    display: flex;
+    margin: 5px;
+    align-items: flex-end;
+}
+
+.transaction {
+    height: 150px;
+    margin-top: 30px;
+    margin-bottom: 25px;
+}
+
+img {
+    border-radius: 7px;
+    float: left;
+    width: 100px;
+    height: 100%;
+}
+
+.detail {
+    margin-left: 120px;
+}
+
+.movie-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+}
+
+.schedule {
+    font-size: 14px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    font-weight: 700;
+    color: rgb(0, 193, 236);
+}
+
+.show-time {
+    font-size: 14px;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.submitted {
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgb(200, 200, 200);
+}
+
+.button-add {
+    background-color: rgb(0, 193, 236);
+    color: white;
+    border: 0px;
+    border-radius: 5px;
+    font-size: 12px;
+    float: right;
+    height: 30px;
+    width: auto;
+    padding: 5px 10px;
+}
+
+.button-del {
+    margin-right: 5px;
+    background-color: rgb(245, 11, 12);
+    color: white;
+    border: 0px;
+    border-radius: 5px;
+    font-size: 12px;
+    float: right;
+    height: 30px;
+    width: auto;
+    padding: 5px 10px;
+}
+
+.button-edit {
+    background-color: rgb(53, 193, 22);
+    margin-left: 10px;
+    color: white;
+    border: 0px;
+    border-radius: 5px;
+    font-size: 12px;
+    float: right;
+    height: 30px;
+    width: auto;
+    padding: 5px 10px;
+}
+
+p, span {
+    font-family: 'Raleway';
+}
+
+#title-label {
+    font-size: 22px;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.keterangan {
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}

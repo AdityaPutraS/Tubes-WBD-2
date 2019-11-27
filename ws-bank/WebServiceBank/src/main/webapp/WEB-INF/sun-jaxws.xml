@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoints
+  xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime"
+  version="2.0">
+  <endpoint
+      name="HelloWorld"
+      implementation="com.wbd.wsbank.HelloWorldImpl"
+      url-pattern="/hello"/>
+  <endpoint
+      name="Transfer"
+      implementation="com.wbd.wsbank.TransferImpl"
+      url-pattern="/transfer"/>
+  <endpoint
+      name="Users"
+      implementation="com.wbd.wsbank.UsersImpl"
+      url-pattern="/users"/>
+  <endpoint
+      name="VirtualAccount"
+      implementation="com.wbd.wsbank.VirtualAccountImpl"
+      url-pattern="/virtualaccount"/>
+  <!-- <endpoint
+      name="Test"
+      implementation="com.wbd.wsbank.Test"
+      url-pattern="/test"/> -->
+</endpoints>

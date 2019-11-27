@@ -1,0 +1,33 @@
+stages:
+  - build
+  - deploy
+
+aws_pull:
+  stage: build
+  only:
+    - dev
+    - master
+  tags:
+    - Bank-Pro
+  script:
+    - 'whoami'
+    - 'cd /home/gitlab-runner/bank-pro'
+    - 'echo "Start pull dari repo"'
+    - 'git stash'
+    - 'git pull origin dev'
+    - 'echo "Done pull dari repo"'
+
+aws_deploy:
+  stage: deploy
+  only:
+    - dev
+    - master
+  tags:
+    - Bank-Pro
+  script:
+    - 'echo "Stop docker sebelumnya"'
+    - 'docker stop bankpro'
+    - 'echo "Mulai build docker"'
+    - 'docker build -t bankpro:dev .'
+    - 'echo "Selesai build docker"'
+    - 'docker run --name bankpro -d -v ${PWD}:/app -v /app/node_modules -p 80:3000 --rm bankpro:dev'

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/color.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/transactions.css">
+    <link rel="shortcut icon" href="">
+    <script src="../js/token.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script> -->    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="../js/transactions.js"></script>
+    <script src="../js/navbar.js"></script>
+    <title>Home</title>
+</head>
+
+<!-- <body class="defFont"> -->
+<body class="defFont" onload="load(document, location, false)">
+    <div id="nav-bar">
+        <div id="Kosong1"></div>
+        <div id="Engi">
+            <p onclick="goHome(location)"><b><span class="blue">Engi</span>ma</b></p>
+        </div>
+        <div id="Search">
+            <form method="POST" id="search-form" onsubmit="search(document, location); return false;">
+                <input id="movieName" type="text" placeholder="Search movie">
+                <input type="submit" value="">
+            </form>
+        </div>
+        <div id="Kosong2"></div>
+        <div id="Transaction" onclick="goTransc(location)">
+            <a><b>Transaction</b></a>
+        </div>
+        <div id="Logout" onclick="logout(document, location)">
+            <a><b>Logout</b></a>
+        </div>
+        <div id="Kosong3"></div>
+    </div>
+    <div class="transactions-content-container">
+        <p id="title-label">Transaction History</p>
+        <script type="text/javascript">
+            var token = getToken(document, "accessTokenWBD");
+            connectPHPGET("../php/getId.php?token=" + token, function (has) {
+                showTransactionList(document, has);
+            })
+        </script>
+        <!-- <div>
+            <div class="transaction">
+                <img src="../img/film/ad astra.jpeg" alt="Movie">
+                <div class="detail">
+                    <div>
+                        <span class="keterangan">ID : </span><span class="keterangan id_transaksi">8</span>
+                        <span class="keterangan">Status pembayaran : </span><span class="keterangan status">Success</span>
+                    </div>
+                    <p class="movie-title">Movie Title</p>
+                    <span class="schedule">Schedule:</span>
+                    <span class="show-time">26 November 2019 - 18.30</span>
+                    <p class="submitted">Your review has been submitted.</p>
+                </div>
+                <button class="button-add">Add Review</button>
+                <button class="button-edit">Edit Review</button>
+                <button class="button-del">Delete Review</button>
+            </div>
+            <hr>
+        </div> -->
+    </div>
+</body>
+
+</html>
