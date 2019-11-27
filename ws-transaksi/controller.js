@@ -56,7 +56,7 @@ exports.successTrans = function(req, res) {
 
 exports.createTrans = function(req, res) {
     
-    var id_transaksi = req.body.id;
+    //var id_transaksi = req.body.id;
     var id_pengguna = req.body.userid;
     var nomor_virtual = req.body.nomorVirtual;
     var id_film = req.body.filmid;
@@ -64,8 +64,8 @@ exports.createTrans = function(req, res) {
     var kursi = req.body.kursi;
     var waktu = req.body.waktu;
 
-    var query = connection.query('INSERT INTO transaksi (id_transaksi, id_pengguna, nomor_virtual, id_film, jadwal, kursi, waktu, status_transaksi) VALUES (?,?,?,?,?,?,?,?)',
-    [ id_transaksi, id_pengguna, nomor_virtual, id_film, jadwal, kursi, waktu, 1 ], 
+    var query = connection.query('INSERT INTO transaksi (id_pengguna, nomor_virtual, id_film, jadwal, kursi, waktu, status_transaksi) VALUES (?,?,?,?,?,?,?)',
+    [ id_pengguna, nomor_virtual, id_film, jadwal, kursi, waktu, 1 ], 
     function (error, rows, fields){
         if(error){
             console.log(error)

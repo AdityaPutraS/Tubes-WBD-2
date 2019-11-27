@@ -2,9 +2,10 @@ var mysql = require('mysql');
 
 var con = mysql.createConnection({
   host: "localhost",
-  user: "root",
-  password: "",
-  database: "nyobanode"
+  user: "engima",
+  password: "engima",
+  database: "ws_transaksi",
+  socketPath: '/var/run/mysqld/mysqld.sock'
 });
 
 con.connect(function (err){
