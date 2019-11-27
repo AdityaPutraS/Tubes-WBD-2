@@ -1,12 +1,23 @@
+function connectPHPGET(phpURL, callback) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", phpURL, true);
+    xmlhttp.send();
+    var hasil = "";
+    xmlhttp.onload = function () {
+        callback(xmlhttp.responseText);
+    }
+}
+
 function renderHeader(doc, loc, id) {
+    //console.log("ini render header");
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", "../php/getScheduleData.php?id="+id, true);
     xmlhttp.send();
     var hasil = "";
     xmlhttp.onload = function () {
         hasil = JSON.parse(xmlhttp.responseText);
-        doc.getElementsByClassName("title")[0].innerHTML = hasil["title"];
-        doc.getElementsByClassName("title")[1].innerHTML = hasil["title"];
+        //doc.getElementsByClassName("title")[0].innerHTML = hasil["title"];
+        //doc.getElementsByClassName("title")[1].innerHTML = hasil["title"];
         let d = hasil["date"].split("-");
         let t = hasil["time"].split(":");
         // let options = {hour12: true, year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
@@ -21,6 +32,12 @@ function renderHeader(doc, loc, id) {
         doc.getElementsByClassName("back-arrow")[0].onclick = function() {
             loc.href = "../html/filmDetail.html?id=" + hasil["film_id"];
         }
+        //console.log(hasil["film_id"]);
+        connectPHPGET("../php/getFilmDetail.php?id=" + hasil["film_id"], function (has) {
+            hasil2 = JSON.parse(has);
+            doc.getElementsByClassName("title")[0].innerHTML = hasil2["title"];
+            doc.getElementsByClassName("title")[1].innerHTML = hasil2["title"];
+        })
     }
 }
 
@@ -42,7 +59,7 @@ function showModal(doc, loc, status) {
     }
 }
 
-function buySeat(doc, loc, id, seatNum) {
+/*function buySeat(doc, loc, id, seatNum, user_id) {
     var xmlhttp = new XMLHttpRequest();
     // var link = "../php/buySeat.php?id="+id+"&seatNumber="+seatNum+"&accessToken="+getToken(doc, "accessTokenWBD");
     // console.log(link);
@@ -60,15 +77,39 @@ function buySeat(doc, loc, id, seatNum) {
         showModal(doc, loc, hasil["status"]);
         renderTakenSeat(doc, loc, id);
     }
+}*/
+
+function buySeat(doc, loc, id, seatNum, user_id) {
+    hasil = JSON.parse(user_id);
+    var userid = parseInt(hasil["user_id"][0]);
+    console.log(userid);
+    var nomorVirtual = "COBAPLISBISA";
+    var kursi = seatNum;
+    connectPHPGET("../php/getScheduleData.php?id=" + id, function (has) {
+        has = JSON.parse(has);
+        var filmid = has["film_id"];
+        var jadwal = has["date"] + " " + has["time"];
+        var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        var waktu = date+' '+time;
+        const user = {userid, nomorVirtual, filmid, jadwal, kursi, waktu};
+        axios.post('http://localhost:3000/createTrans', user, { responseType: 'json' })
+        .then(response => {
+            //console.log(response);
+        })
+        .catch(error => console.error(error));   
+    })
 }
 
-function renderSeatSelect(doc, loc, id, seatNum, maxSeat) {
+function renderSeatSelect(doc, loc, id, seatNum, maxSeat, user_id) {
     doc.getElementsByClassName("no-selection")[0].style["visibility"] = "hidden";
     doc.getElementsByClassName("already-select")[0].style["visibility"] = "visible";
     doc.getElementsByClassName("buy-button-container")[0].style["visibility"] = "visible";
     doc.getElementsByClassName("seatNumber")[0].innerHTML = "Seat #" + seatNum;
     doc.getElementsByClassName("buy-button")[0].onclick = function () {
-        buySeat(doc, loc, id, seatNum);
+        // INI ADD TRANSACTION
+        buySeat(doc, loc, id, seatNum, user_id);
     }
     for (let i = 0; i < maxSeat; i++) {
         let seat = doc.getElementById("seat"+(i+1));
@@ -80,29 +121,45 @@ function renderSeatSelect(doc, loc, id, seatNum, maxSeat) {
     renderTakenSeat(doc, loc, id);
 }
 
-function renderSeat(doc, loc, id) {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", "../php/getMaxSeat.php?id="+id, true);
-    xmlhttp.send();
-    var hasil = "";
-    xmlhttp.onload = function () {
-        hasil = JSON.parse(xmlhttp.responseText);
-        var maxSeat = hasil["max_seat"];
-        var seatGrid = doc.getElementsByClassName("seat-grid")[0];
-        for (let i = 0; i < maxSeat; i++) {
-            let seat = doc.createElement("div");
-            seat.id = "seat"+(i+1);
-            seat.className = "seat blue";
-            var p = doc.createElement("p");
-            p.innerHTML = i+1;
-            seat.appendChild(p);
-            seat.onclick = function () {
-                renderSeatSelect(doc, loc, id, i+1, maxSeat);
-            }
-            seatGrid.appendChild(seat);
+function renderSeat(doc, loc, id, user_id) {
+    //console.log("ini render seat");
+    // var xmlhttp = new XMLHttpRequest();
+    // xmlhttp.open("GET", "../php/getMaxSeat.php?id="+id, true);
+    // xmlhttp.send();
+    // var hasil = "";
+    // xmlhttp.onload = function () {
+    //     hasil = JSON.parse(xmlhttp.responseText);
+    //     var maxSeat = hasil["max_seat"];
+    //     var seatGrid = doc.getElementsByClassName("seat-grid")[0];
+    //     for (let i = 0; i < maxSeat; i++) {
+    //         let seat = doc.createElement("div");
+    //         seat.id = "seat"+(i+1);
+    //         seat.className = "seat blue";
+    //         var p = doc.createElement("p");
+    //         p.innerHTML = i+1;
+    //         seat.appendChild(p);
+    //         seat.onclick = function () {
+    //             renderSeatSelect(doc, loc, id, i+1, maxSeat);
+    //         }
+    //         seatGrid.appendChild(seat);
+    //     }
+    //     renderTakenSeat(doc, loc, id);
+    // }
+    var maxSeat = 30;
+    var seatGrid = doc.getElementsByClassName("seat-grid")[0];
+    for (let i = 0; i < maxSeat; i++) {
+        let seat = doc.createElement("div");
+        seat.id = "seat"+(i+1);
+        seat.className = "seat blue";
+        var p = doc.createElement("p");
+        p.innerHTML = i+1;
+        seat.appendChild(p);
+        seat.onclick = function () {
+            renderSeatSelect(doc, loc, id, i+1, maxSeat, user_id);
         }
-        renderTakenSeat(doc, loc, id);
+        seatGrid.appendChild(seat);
     }
+    renderTakenSeat(doc, loc, id);
 }
 
 function renderTakenSeat(doc, loc, id) {

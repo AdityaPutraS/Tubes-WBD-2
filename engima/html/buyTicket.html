@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/buyTicket.css">
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="shortcut icon" href="">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="../js/token.js"></script>
     <script src="../js/navbar.js"></script>
     <script src="../js/buyTicket.js"></script>
@@ -90,8 +91,13 @@
     <script type="text/javascript">
         var url = new URL(location);
         var id = url.searchParams.get("id");
+        console.log("id nya adalah " + id);
         renderHeader(document, location, id);
-        renderSeat(document, location, id);
+        var token = getToken(document, "accessTokenWBD");
+        connectPHPGET("../php/getId.php?token=" + token, function (has) {
+            console.log("id pengguna " + has)
+            renderSeat(document, location, id, has);
+        })
     </script>
 </body>
 

@@ -4,10 +4,11 @@
     $db = new DatabaseAccess("localhost", "root", "", "wbd");
 
     $result = $db->query(
-       "SELECT film_id, title, date, time
-       FROM schedule NATURAL JOIN film
-       WHERE schedule_id=".$_GET["id"]
-    );
+        "SELECT film_id, date, time
+        FROM schedule
+        WHERE schedule_id=".$_GET["id"]
+     );
+
     if($result){
         $res = array();
         while($data = $result->fetch_assoc()) {

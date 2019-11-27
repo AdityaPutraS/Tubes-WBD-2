@@ -9,17 +9,36 @@ function connectPHPGET(phpURL, callback) {
 }
 
 function renderDetail(dis, hasil) {
+    //console.log("ini masuk render detail");
     hasil = JSON.parse(hasil);
-    dis.getElementById("fotoFilm").src = hasil.film_picture;
+    //console.log(hasil);
+    dis.getElementById("fotoFilm").src = "https://image.tmdb.org/t/p/w200" + hasil.poster_path;
     dis.getElementsByClassName("judul")[0].innerHTML = hasil.title;
-    dis.getElementById("genre").innerHTML = hasil.genre;
-    dis.getElementById("durasi").innerHTML = hasil.durasi;
-    dis.getElementById("releaseDate").innerHTML = (new Date(hasil.released_date)).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
-    dis.getElementById("rerataRating").innerHTML = hasil.avg_rating;
-    dis.getElementsByClassName("deskripsi")[0].innerHTML = hasil.detail;
+    /*var sGenre = "";
+    for (var i=0; i<hasil.genres.length; i++){
+        sGenre += hasil.genres[i].name + " ";
+    }
+    dis.getElementById("genre").innerHTML = sGenre;*/
+    dis.getElementById("genre").innerHTML = hasil.genres;
+    dis.getElementById("durasi").innerHTML = hasil.runtime;
+    dis.getElementById("releaseDate").innerHTML = hasil.release_date;
+    dis.getElementById("rerataRating").innerHTML = hasil.vote_average;
+    dis.getElementsByClassName("deskripsi")[0].innerHTML = hasil.overview;
+
+    addSchedule(hasil.id, hasil.release_date);
+}
+
+function addSchedule(id, jadwal){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", "../php/addSchedule.php?id=" + id + "&jadwal=" + jadwal, true);
+    xmlhttp.send();
+    xmlhttp.onload = function () {
+        //console.log(xmlhttp.responseText);
+    }
 }
 
 function renderSchedule(dis, loc, hasil) {
+    //console.log("ini masuk render schedule");
     hasil = JSON.parse(hasil);
     hasil.forEach(has => {
         var row = dis.createElement("tr");

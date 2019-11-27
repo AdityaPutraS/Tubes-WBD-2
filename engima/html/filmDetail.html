@@ -53,7 +53,7 @@
             <script type="text/javascript">
                 var url = new URL(location);
                 var id = url.searchParams.get("id");
-                connectPHPGET("../php/getFilm.php?id=" + id, function (has) {
+                connectPHPGET("../php/getFilmDetail.php?id=" + id + "&counter=0", function (has) {
                     renderDetail(document, has);
                 })
             </script>
