@@ -6,8 +6,10 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
-import  { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
+import axios from 'axios'
 import './App.css';
+import { setCookie } from './utility';
 
 const styles = theme => ({
   card: {
@@ -32,7 +34,7 @@ const styles = theme => ({
   },
   text_field: {
     width: 250,
-  },  
+  },
 });
 
 const useStyles = makeStyles(theme => ({
@@ -45,14 +47,14 @@ const useStyles = makeStyles(theme => ({
 function FailedLogin() {
   const classes = useStyles();
   const clicked = (event) => {
-    document.getElementById('failed-login').style.display='none';
+    document.getElementById('failed-login').style.display = 'none';
   }
   return (
     <div id="failed-login" className="modal">
       <div className="modal-content">
-          <p className="judul">LOGIN GAGAL!</p>
-          <p className="content">Terjadi kesalahan. Silahkan coba kembali.</p>
-          <Button className={classes.buttonBack} onClick={clicked} variant="contained" color="secondary">Kembali</Button>
+        <p className="judul">LOGIN GAGAL!</p>
+        <p className="content">Terjadi kesalahan. Silahkan coba kembali.</p>
+        <Button className={classes.buttonBack} onClick={clicked} variant="contained" color="secondary">Kembali</Button>
       </div>
     </div>
   );
@@ -62,24 +64,37 @@ class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     this.checkLogin = this.checkLogin.bind(this);
-    this.state = { 
+    this.state = {
       rekening: "",
       navigate: false,
     };
   }
 
   rekeningHandler = (event) => {
-    this.setState({rekening: event.target.value});
+    this.setState({ rekening: event.target.value });
   }
 
-  checkLogin(){
+  checkLogin() {
     //CHECK DARI WS BANK
-    this.setState({navigate: true});
-    //KALO GA KELUARIN MODAL
-    //document.getElementById('failed-login').style.display='block';
+    var userId = document.getElementById("noRekening").value;
+    var xmls = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsb="http://wsbank.wbd.com/"><soapenv:Header/><soapenv:Body><wsb:findUser><arg0>' + userId + '</arg0></wsb:findUser></soapenv:Body></soapenv:Envelope>';
+    axios.post('http://localhost:8080/WebServiceBank/users?wsdl', xmls, {
+      headers: { 'Content-Type': 'text/xml' }
+    }).then((res) => {
+      // console.log(res);
+      let domPar = new DOMParser();
+      let doc = domPar.parseFromString(res.data, "text/xml");
+      let valid = doc.getElementsByTagName("return")[0].innerHTML === "true";
+      if (valid) {
+        setCookie("userBankPro", userId, 0.5);
+        this.setState({ navigate: true });
+      } else {
+        document.getElementById('failed-login').style.display = 'block';
+      }
+    })
   }
 
-  render() { 
+  render() {
     if (this.state.navigate) {
       return (<Redirect to='/Home' />);
     } else {
@@ -91,6 +106,7 @@ class LoginPage extends React.Component {
               <h1>Bank Pro</h1>
               <CardContent className={classes.content}>
                 <TextField
+                  id="noRekening"
                   label="Nomor Rekening"
                   className={classes.text_field}
                   margin="normal"
@@ -105,7 +121,7 @@ class LoginPage extends React.Component {
               </CardContent>
             </Box>
           </div>
-          <FailedLogin />  
+          <FailedLogin />
         </div>
       );
     }
