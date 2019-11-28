@@ -96,8 +96,16 @@ function buySeat(doc, loc, id, seatNum, user_id) {
         const user = {userid, nomorVirtual, filmid, jadwal, kursi, waktu};
         axios.post('http://localhost:3000/createTrans', user, { responseType: 'json' })
         .then(response => {
-            //console.log(response);
+            var id_transaksi = response.data.values.id_transaksi;
             loc.href = "../html/transaction.html";
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", "../php/buySeat.php?id="+id+"&seatNumber="+seatNum+"&user_id="+userid+"&tId="+id_transaksi, true);
+            xmlhttp.send();
+            var hasil = "";
+            xmlhttp.onload = function () {
+                hasil = xmlhttp.responseText;
+                console.log(hasil);
+            }
         })
         .catch(error => console.error(error));   
     })
