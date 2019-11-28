@@ -4,7 +4,7 @@
   <link rel="stylesheet" type="text/css" href="../css/UserReview.css">
   <link rel="stylesheet" type="text/css" href="../css/navbar.css">
   <link rel="stylesheet" type="text/css" href="../css/color.css">
-  <script src="../js/UserReview.js"></script>
+  <script src="../js/userReview.js"></script>
   <script src="../js/token.js"></script>
   <script src="../js/navbar.js"></script>
 </head>
@@ -33,17 +33,15 @@
   <div class="container">
     <div class="header">
       <input class="back" type="image" src="../img/back.png"
-        onclick="window.location.href='../html/home.html'">
+        onclick="window.location.href='../html/transaction.html'">
       <h1 class="judul-h">
         <p class="judul"> Tenki no Ko </p>
       </h1>
     </div>
     <script type="text/javascript">
       var url = new URL(location);
-      var id = url.searchParams.get("id");
-      connectPHPGET("../php/getFilm.php?id=" + id, function (has) {
-        renderJudul(document, has);
-      });
+      var fId = url.searchParams.get("fId");
+      showJudul(document, fId);
     </script>
     <form onsubmit="Submitting(document, location); return false;">
       <div id="FormReview">

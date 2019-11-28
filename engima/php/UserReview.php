@@ -7,9 +7,7 @@
     $uid = $db->query('SELECT user_id FROM login WHERE cookies="'.$_POST["token"].'"');   
     $uidrows = $uid->fetch_assoc();
     $film_id = $_POST["film_id"];
-    $query = "SELECT rating, review 
-    FROM film_review 
-    WHERE ((user_id='".$uidrows["user_id"]."') AND (film_id ='".$film_id."'))";
+    $query = "SELECT rating, review FROM film_review WHERE id_transaksi =" . $_POST["id_transaksi"];
     // echo $query;
     $review = $db->query(
         $query
@@ -19,9 +17,9 @@
     $res["status"] = 200;
 
     if($review->num_rows > 0) {
-        $db->query("DELETE FROM film_review WHERE user_id='".$uidrows["user_id"]."'");
+        $db->query("DELETE FROM film_review WHERE id_transaksi =" . $_POST["id_transaksi"]);
     }
-    $query = "INSERT INTO film_review (user_id, film_id, rating, review) VALUES ('";
+    $query = "INSERT INTO film_review (user_id, film_id, rating, review, id_transaksi) VALUES ('";
     $query .= $uidrows["user_id"];
     $query .= "', '";
     $query .= $film_id;
@@ -29,8 +27,10 @@
     $query .= $_POST["rating"];
     $query .= "', '";
     $query .= $_POST["review"];
+    $query .= "', '";
+    $query .= $_POST["id_transaksi"];
     $query .= "')";
-    // echo $query;
+    //echo $query;
     $succ = $db->query($query);
     if(!$succ) {
         $res["status"] = 400;

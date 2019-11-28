@@ -43,7 +43,7 @@
             var token = getToken(document, "accessTokenWBD");
             connectPHPGET("../php/getId.php?token=" + token, function (has) {
                 updateTransactions(has);
-                showTransactionList(document, has);
+                showTransactionList(document, has, location);
             })
         </script>
         <!-- <div>
