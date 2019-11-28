@@ -70,7 +70,8 @@ exports.createTrans = function(req, res) {
         if(error){
             console.log(error)
         } else{
-            response.ok("Berhasil membuat transaksi!", res)
+            var data = { id_transaksi: rows.insertId }
+            response.ok(data, res)   
         }
     });
 
