@@ -51,7 +51,7 @@ function addSchedule(id, jadwal){
     xmlhttp.open("GET", "../php/addSchedule.php?id=" + id + "&jadwal=" + jadwal, true);
     xmlhttp.send();
     xmlhttp.onload = function () {
-        //console.log(xmlhttp.responseText);
+        console.log(xmlhttp.responseText);
     }
 }
 

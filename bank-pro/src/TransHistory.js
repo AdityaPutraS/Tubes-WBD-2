@@ -16,7 +16,6 @@ export class TransHistory extends Component {
             let domPar = new DOMParser();
             let doc = domPar.parseFromString(res.data, "text/xml");
             let riwayat = doc.getElementsByTagName("riwayatTransaksi");
-            window.a = riwayat;
             let arr = [];
             for (let i = 0; i < riwayat.length; i++) {
                 const r = riwayat[i];
