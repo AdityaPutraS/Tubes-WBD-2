@@ -5,6 +5,9 @@ import javax.jws.WebMethod;
 import java.util.Date;
 import java.sql.*;
 import javax.sql.*;
+
+import com.mysql.cj.xdevapi.Result;
+
 import java.util.Random;
 
 //Service Implementation Bean
@@ -45,7 +48,7 @@ public class TransferImpl implements Transfer {
 			Connection connection = DriverManager.getConnection(dbUrl, userName, password);
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
-			while (resultSet.next()) {
+			if (resultSet.next()) {
 				if (resultSet.getInt("saldo") >= amount) {
 					enough = true;
 				}
@@ -98,31 +101,31 @@ public class TransferImpl implements Transfer {
 			if (isSaldoCukup(pengirim, amount)) {
 				// Insert ke transaksi
 				String query = "INSERT INTO transaksi(no_rek_pengirim, no_rek_penerima, jumlah) VALUES(" + pengirim
-						+ ", " + penerima + ", 20000)";
+						+ ", " + penerima + ", "+amount+")";
 				try {
 					Class.forName(dbClass);
 					Connection connect = DriverManager.getConnection(dbUrl, userName, password);
 					Statement statement = connect.createStatement();
-					ResultSet rs = statement.executeQuery(query);
-					if (rs.next()) {
-						// Kurangin dari pengirim, tambahin ke penerima
-						String updatePengirim = "UPDATE nasabah SET jumlah=jumlah-" + amount + " where no_rekening="
-								+ pengirim;
-						ResultSet updKirim = statement.executeQuery(updatePengirim);
-						if (updKirim.next()) {
-							if (penerimaVirtual) {
-
-							} else {
-							}
-							String updatePenerima = "UPDATE nasabah SET jumlah=jumlah-" + amount + " where no_rekening="
-									+ pengirim;
-							ResultSet updTerima = statement.executeQuery(updatePenerima);
-						} else {
-							t = false;
+					int rs = statement.executeUpdate(query);
+					System.out.println(rs + " query kena");
+					// Kurangin dari pengirim, tambahin ke penerima
+					String updatePengirim = "UPDATE nasabah SET saldo=saldo-" + amount + " where no_rekening="
+							+ pengirim;
+					int updKirim = statement.executeUpdate(updatePengirim);
+					System.out.println(updKirim + " query kena");
+					if (penerimaVirtual) {
+						String getRekeningPenerima = "SELECT no_rekening FROM akun_virtual WHERE no_virtual=" + penerima;
+						ResultSet rekPenerima = statement.executeQuery(getRekeningPenerima);
+						if(rekPenerima.next())
+						{
+							penerima = rekPenerima.getString("no_rekening");
 						}
-					} else {
-						t = false;
 					}
+					String updatePenerima = "UPDATE nasabah SET saldo=saldo+" + amount + " where no_rekening="
+							+ penerima;
+					int updTerima = statement.executeUpdate(updatePenerima);
+					System.out.println(updTerima + " query kena");
+					t = true;
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				} catch (SQLException e) {
