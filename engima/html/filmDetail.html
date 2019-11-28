@@ -79,11 +79,13 @@
                 </table>
             </div>
             <div class="film-reviews film-content-box">
-                <h2>Reviews</h2>
+                <h2>Reviews <span id="rating_user">0</span><span>/10</span></h2>
                 <script type="text/javascript">
                     var url = new URL(location);
                     var id = url.searchParams.get("id");
+                    renderRating(document, id);
                     connectPHPGET("../php/getReview.php?id=" + id, function (has) {
+                        console.log(has);
                         renderReview(document, has);
                     })
                 </script>

@@ -8,6 +8,24 @@ function connectPHPGET(phpURL, callback) {
     }
 }
 
+function renderRating(doc, id){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", "../php/getAvgRating.php?id=" + id, true);
+    xmlhttp.send();
+    var hasil = "";
+    xmlhttp.onload = function () {
+        hasil = JSON.parse(xmlhttp.responseText);
+        console.log(hasil.avg_rating);
+        if (hasil.avg_rating!=null){
+            console.log(hasil.avg_rating);
+            console.log(typeof hasil.avg_rating);
+            doc.getElementById("rating_user").innerHTML = hasil.avg_rating;
+        } else {
+            doc.getElementById("rating_user").innerHTML = 0;
+        }
+    }
+}
+
 function renderDetail(dis, hasil) {
     //console.log("ini masuk render detail");
     hasil = JSON.parse(hasil);

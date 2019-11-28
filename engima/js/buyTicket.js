@@ -33,7 +33,7 @@ function renderHeader(doc, loc, id) {
             loc.href = "../html/filmDetail.html?id=" + hasil["film_id"];
         }
         //console.log(hasil["film_id"]);
-        connectPHPGET("../php/getFilmDetail.php?id=" + hasil["film_id"], function (has) {
+        connectPHPGET("../php/getFilmDetail.php?id=" + hasil["film_id"] + "&counter=0", function (has) {
             hasil2 = JSON.parse(has);
             doc.getElementsByClassName("title")[0].innerHTML = hasil2["title"];
             doc.getElementsByClassName("title")[1].innerHTML = hasil2["title"];
@@ -97,6 +97,7 @@ function buySeat(doc, loc, id, seatNum, user_id) {
         axios.post('http://localhost:3000/createTrans', user, { responseType: 'json' })
         .then(response => {
             //console.log(response);
+            loc.href = "../html/transaction.html";
         })
         .catch(error => console.error(error));   
     })

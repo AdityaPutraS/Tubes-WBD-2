@@ -210,3 +210,5 @@ function showTransactionList(doc, hasil, loc) {
     })
     .catch(error => console.error(error));
 }
+
+
