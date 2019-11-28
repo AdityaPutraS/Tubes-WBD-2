@@ -13,26 +13,18 @@ export class DataRekening extends Component {
     componentWillMount() {
         //Get id user dari backend
         var userId = getCookie("userBankPro");
-        var xmlsId = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsb="http://wsbank.wbd.com/"><soapenv:Header/><soapenv:Body><wsb:getId><arg0>' + userId + '</arg0></wsb:getId></soapenv:Body></soapenv:Envelope>';
-        axios.post('http://localhost:8080/WebServiceBank/users?wsdl', xmlsId, {
+        var xmlsAkun = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsb="http://wsbank.wbd.com/"><soapenv:Header/><soapenv:Body><wsb:getUserData><arg0>' + userId + '</arg0></wsb:getUserData></soapenv:Body></soapenv:Envelope>';
+        axios.post('http://localhost:8080/WebServiceBank/users?wsdl', xmlsAkun, {
             headers: { 'Content-Type': 'text/xml' }
         }).then((res) => {
+            console.log(res);
             let domPar = new DOMParser();
             let doc = domPar.parseFromString(res.data, "text/xml");
-            let id = doc.getElementsByTagName("return")[0].innerHTML;
-            var xmlsAkun = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsb="http://wsbank.wbd.com/"><soapenv:Header/><soapenv:Body><wsb:getUserData><arg0>'+id+'</arg0></wsb:getUserData></soapenv:Body></soapenv:Envelope>';
-            axios.post('http://localhost:8080/WebServiceBank/users?wsdl', xmlsAkun, {
-                headers: { 'Content-Type': 'text/xml' }
-            }).then((res) => {
-                console.log(res);
-                let domPar = new DOMParser();
-                let doc = domPar.parseFromString(res.data, "text/xml");
-                // console.log(doc);
-                let nama = doc.getElementsByTagName("nama")[0].innerHTML;
-                let noRekening = doc.getElementsByTagName("noRekening")[0].innerHTML;
-                let saldo = doc.getElementsByTagName("saldo")[0].innerHTML;
-                this.setState({nama:nama, noRek:noRekening, saldo:saldo});
-            })
+            // console.log(doc);
+            let nama = doc.getElementsByTagName("nama")[0].innerHTML;
+            let noRekening = doc.getElementsByTagName("noRekening")[0].innerHTML;
+            let saldo = doc.getElementsByTagName("saldo")[0].innerHTML;
+            this.setState({ nama: nama, noRek: noRekening, saldo: saldo });
         })
     }
 

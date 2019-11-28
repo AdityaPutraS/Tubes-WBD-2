@@ -66,13 +66,13 @@ function Home() {
             <Tab label="Riwayat" {...a11yProps(2)} />
           </Tabs>
         </AppBar>
-        <TabPanel value={value} index={0}>
+        <TabPanel value={value} index={0} id="dataRekening">
           <DataRekening/>
         </TabPanel>
-        <TabPanel value={value} index={1}>
+        <TabPanel value={value} index={1} id="transferPanel">
           <TransferPanel/>
         </TabPanel>
-        <TabPanel value={value} index={2}>
+        <TabPanel value={value} index={2} id="transferHistory">
           <TransHistory/>
         </TabPanel>
       </div>
